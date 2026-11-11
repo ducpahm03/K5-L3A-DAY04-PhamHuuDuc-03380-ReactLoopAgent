@@ -37,6 +37,10 @@ class Provider:
             raise ValueError('Cần đặt MODEL là model có hỗ trợ tool calling.')
         self.name, self.model = name, model
         key_name, self.url = CONFIG[name]
+        base_url = os.getenv('OPENAI_BASE_URL', '').strip()
+        if name == 'openai' and base_url:
+            base_url = base_url.rstrip('/')
+            self.url = base_url if base_url.endswith('/chat/completions') else f'{base_url}/chat/completions'
         self.key = os.getenv(key_name)
         if not self.key:
             raise ValueError(f'Thiếu {key_name}; xem README.md.')
